@@ -1,16 +1,22 @@
-# Use official Node.js image
+# Use official Node.js image 
 FROM node:18
 
 # Set working directory
 WORKDIR /app
 
-# Copy source code
-COPY . .
+# Copy only package files first (better for caching)
+COPY package*.json ./
 
-# Install dependencies (none in this simple case)
+# Install dependencies
 RUN npm install
 
-# Expose port
+# Copy the rest of the source code
+COPY . .
+
+# Fix file permissions (avoid security warning)
+RUN chmod -R 755 /app
+
+# Expose app port
 EXPOSE 3000
 
 # Start the app
